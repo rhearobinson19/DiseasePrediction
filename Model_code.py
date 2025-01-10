@@ -1,21 +1,23 @@
-import pandas as pd
-import numpy as np
+from sklearn.linear_model import LinearRegression
 
-# Define diseases and symptoms
-diseases = [f'Disease_{i+1}' for i in range(41)]
-symptoms = [f'Symptom_{i+1}' for i in range(17)]
+# Train Model using Linear Regression
+model = LinearRegression()  # Create an instance of Linear Regression
+model.fit(X_train, y_train)  # Fit the model with training data
 
-# Generate synthetic data
-np.random.seed(42)
-data = {
-    **{symptom: np.random.randint(0, 2, 4940) for symptom in symptoms},  # Random 0/1 for symptoms
-    'disease': np.random.choice(diseases, 4940)  # Random disease assignment
-}
+# Make Predictions
+y_pred = model.predict(X_test)  # Predict the diseases for the test data
 
-# Create DataFrame
-df = pd.DataFrame(data)
+# Model Evaluation
+from sklearn.metrics import mean_squared_error, r2_score, accuracy_score
 
-# Save to CSV
-df.to_csv('disease_data.csv', index=False)
+mse = mean_squared_error(y_test, y_pred)  # Mean Squared Error
+r2 = r2_score(y_test, y_pred)  # R-squared value
+print("Mean Squared Error:", mse)
+print("R-squared:", r2)
 
-print("Dataset created and saved as 'disease_data.csv'.")
+# Accuracy Calculation (convert predicted values to disease classification)
+threshold = 0.5  # This threshold can be adjusted based on the problem
+y_pred_class = [1 if pred > threshold else 0 for pred in y_pred]
+accuracy = accuracy_score(y_test, y_pred_class)
+
+print("Accuracy:", accuracy)
